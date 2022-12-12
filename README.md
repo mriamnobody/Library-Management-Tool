@@ -13,4 +13,7 @@ As of now, this tool has following features:
 
 3. Delete a book
 
+Prerequesites:
 
+1. Python 3.7 or above
+2. Mysql
