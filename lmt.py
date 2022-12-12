@@ -1,4 +1,8 @@
 import mysql.connector
+from colorama import init
+from termcolor import colored
+
+init()
 
 query = """
 CREATE TABLE books (
@@ -26,11 +30,11 @@ else:
     pass
 
 while True:
-    print("\nWelcome to the Library Management Tool. Please select an option: ")
-    print("\n1. Add a book")
-    print("2. Search for a book")
-    print("3. Delete a book")
-    print("4. Exit\n")
+    print(colored("\nWelcome to the Library Management Tool. Please select an option: "))
+    print(colored("\n1. Add a book"))
+    print(colored("2. Search for a book"))
+    print(colored("3. Delete a book"))
+    print(colored("4. Exit\n"))
     choice = input("Enter your choice: ")
 
     if choice == "1":
@@ -38,44 +42,53 @@ while True:
 
         for i in range(1):
             title = input("Enter the Title of the book: ")
-            author = input("Enter the Author of the book: ")
-            genre = input("Enter the Genre of the book: ")
-            location = input("Enter the Location of the book: ")
+            mycursor.execute("SELECT * FROM books WHERE title = %s", (title,))
+            myresult = mycursor.fetchall()
+            if myresult != []:
+                print("\nBook already exists in the library")
+                continue
+            else:
+                author = input("Enter the Author of the book: ")
+                genre = input("Enter the Genre of the book: ")
+                location = input("Enter the Location of the book: ")
+                book_details.append((title, author, genre, location))
+                mycursor.executemany("INSERT INTO books (title, author, genre, location) VALUES (%s, %s, %s, %s)", book_details)
+                mydb.commit()
+                print(colored("\nBook successfully added to the library."))
         
-        mycursor.execute("SELECT * FROM books WHERE title = %s", (title,))
-        myresult = mycursor.fetchall()
-        if myresult != []:
-            print("\nBook already exists in the library")
-            continue
-        else:
-            book_details.append((title, author, genre, location))
-            mycursor.executemany("INSERT INTO books (title, author, genre, location) VALUES (%s, %s, %s, %s)", book_details)
-            mydb.commit()
-            print("\nBook successfully added to the library.")
-
     elif choice == "2":
         title = input("Enter the Title of the book: ")
         mycursor.execute("SELECT * FROM books WHERE title = %s", (title,))  
         myresult = mycursor.fetchall()
 
         if myresult == []:
-            print("\nBook not found in the library")
+            print(colored("\nBook not found in the library."))
             continue
         else:
+            print(colored("\nBook found in the library.\n"))
             for x in myresult:
-                print(x)
+                print("Book Name:", x[1])
+                print("Book Author:", x[2])
+                print("Book Genre:", x[3])
+                print("Book Location:", x[4], "\n")
 
     elif choice == "3":
         title = input("Enter the Title of the book: ")
+
         mycursor.execute("SELECT * FROM books WHERE title = %s", (title,))
         myresult = mycursor.fetchall()
         if myresult == []:
-            print("\nBook not found in the library")
+            print(colored("\nBook not found in the library"))
             continue
         else:
-            mycursor.execute("DELETE FROM books WHERE title = %s", (title,))
-            mydb.commit()
-            print(mycursor.rowcount, "\nBook {title} successfully deleted from the library.\n")
+            confirmation = input("Are you sure you want to delete the book? (y/n)")
+
+            if confirmation == "y":
+                mycursor.execute("DELETE FROM books WHERE title = %s", (title,))
+                mydb.commit()
+                print(colored("\nBook successfully deleted from the library.\n"))
+            else:
+                print(colored("\nOperation cancelled.\n"))
 
     elif choice == "4":
         print ("\nThank you for using the Library Management Tool.\n")
