@@ -17,3 +17,5 @@ Prerequesites:
 
 1. Python 3.7 or above
 2. Mysql
+
+As of now the tool is works CLI. I will try to build a GUI app for this tool.
