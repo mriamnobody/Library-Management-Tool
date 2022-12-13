@@ -18,4 +18,4 @@ Prerequesites:
 1. Python 3.7 or above
 2. Mysql
 
-As of now the tool works through CLI. I will try to build a GUI app for this tool soon.
+A lot of work is needed at the time of writing this readme. As of now the tool works through CLI. I will try to build a GUI app for this tool soon.
