@@ -18,4 +18,8 @@ Prerequesites:
 1. Python 3.7 or above
 2. Mysql
 
+There are three python files. 
+  1. lmt(mysql).py - This needs Mysql to work
+  2. lmt(sqlite3-refactored).py - This file doesn't require any external database, instead it works with builtin Sqlite3 database. Code of this file is refactored. 
+  3. lmt(sqlite3-notrefactored).py - This file doesn't require any external database, instead it works with builtin Sqlite3 database. The code of this file not refactored but has imporved logic over the refactored sqlite3.py file. (Refactoring will not affect the logic of the program)
 A lot of work is needed at the time of writing this readme. As of now the tool works through CLI. I will try to build a GUI app for this tool soon.
