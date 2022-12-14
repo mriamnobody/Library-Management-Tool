@@ -22,6 +22,8 @@ BEGIN
     UPDATE books SET serial = serial - 1 WHERE serial > old.serial;
 END;
 '''
+c.execute(trigger_sql)
+conn.commit()
 
 def add_book():
 
@@ -207,7 +209,6 @@ def update_book():
         print("Author:",book[2])
         print("Genre:",book[3])
         print("Location:",book[4])
-    #check how many books are there with the same title
 
     if len(books) > 1:
         while True:
@@ -476,8 +477,6 @@ def main():
             search_book()
         elif choice == "4":
             delete_book()
-            c.execute(trigger_sql)
-            conn.commit()
         elif choice == "5":
             update_book()
         elif choice == "6":
@@ -486,8 +485,8 @@ def main():
             print("\nExiting...")
             print("Thank you for using Library Management Tool\n")
             break
-        # elif choice == "8":
-        #     delete_table()
+        elif choice == "8":
+            delete_table()
         elif choice == "":
             print("\nPlease enter a valid choice.")
         else:
