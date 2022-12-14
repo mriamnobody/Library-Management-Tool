@@ -1,6 +1,8 @@
-
 import sqlite3
+from fpdf import FPDF
 from tabulate import tabulate
+from typing import Union, Set, Tuple, List
+
 
 conn = sqlite3.connect('bookshelf.db')
 c = conn.cursor()
@@ -13,6 +15,13 @@ c.execute("""CREATE TABLE IF NOT EXISTS books (
             location TEXT
     )""")
 conn.commit()
+
+trigger_sql = '''
+CREATE TRIGGER IF NOT EXISTS update_serials AFTER DELETE ON books
+BEGIN
+    UPDATE books SET serial = serial - 1 WHERE serial > old.serial;
+END;
+'''
 
 def add_book():
 
@@ -107,8 +116,6 @@ def delete_book():
                     break
                 else:
                     print("\nPlease enter a valid serial number.")
-            # conn.commit()
-            # books = c.fetchall()
 
             while books == []:
                 print("\nBook with that serial number doesn't exist. Please enter a valid serial number.")
@@ -435,18 +442,18 @@ def total_books():
     books = c.fetchall()
     print(f"There are total {books[0][0]} books in the library")
 
-# def delete_table():
-#     c.execute("DROP TABLE books")
-#     conn.commit()
-#     print("\nTable deleted successfully\n")
-#     c.execute("""CREATE TABLE IF NOT EXISTS books (
-#             serial INTEGER PRIMARY KEY AUTOINCREMENT,
-#             title TEXT,
-#             author TEXT,
-#             genre TEXT,
-#             location TEXT
-#     )""")
-#     conn.commit()
+def delete_table():
+    c.execute("DROP TABLE books")
+    conn.commit()
+    print("\nTable deleted successfully\n")
+    c.execute("""CREATE TABLE IF NOT EXISTS books (
+            serial INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT,
+            author TEXT,
+            genre TEXT,
+            location TEXT
+    )""")
+    conn.commit()
 
 def main():
     while True:
@@ -469,6 +476,8 @@ def main():
             search_book()
         elif choice == "4":
             delete_book()
+            c.execute(trigger_sql)
+            conn.commit()
         elif choice == "5":
             update_book()
         elif choice == "6":
@@ -484,7 +493,9 @@ def main():
         else:
             print("\nPlease enter a valid choice.")
 
-
 main()
 
 conn.close()
+
+
+
