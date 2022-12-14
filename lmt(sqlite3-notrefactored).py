@@ -107,8 +107,9 @@ def delete_book():
                     break
                 else:
                     print("\nPlease enter a valid serial number.")
-            conn.commit()
-            books = c.fetchall()
+            # conn.commit()
+            # books = c.fetchall()
+
             while books == []:
                 print("\nBook with that serial number doesn't exist. Please enter a valid serial number.")
                 serial = input("\nEnter the serial number of the book which you want to delete:\n")
@@ -145,8 +146,10 @@ def delete_book():
                     c.execute("DELETE FROM books WHERE title LIKE ?", (pattern,))
                     conn.commit()
                     print("\nBook successfully deleted from the library.\n")
+                    break
                 elif confirmation == "no":
                     print("\nOperation cancelled.\n")
+                    break
                 else:
                     print("\nInvalid input.\n")
         else:
@@ -206,9 +209,6 @@ def update_book():
                 break
             else:
                 print("\nPlease enter a valid serial number.")
-
-        conn.commit()
-        books = c.fetchall()
 
         while books == []:
             print("\nBook with that serial number doesn't exist. Please enter a valid serial number.")
@@ -320,9 +320,7 @@ def update_book():
             print("\nBook not found in the library")
        
     else:
-        # c.execute("SELECT * FROM books WHERE title = :title", {'title': title})
-        # conn.commit()
-        # books = c.fetchone()
+
         if books != []:
             while True:
                 print("\nWhat would you like to edit?")
@@ -435,8 +433,20 @@ def update_book():
 def total_books():
     c.execute("SELECT COUNT(*) FROM books")
     books = c.fetchall()
-    #count total entries in the table books under column title and print it out as an integer value
     print(f"There are total {books[0][0]} books in the library")
+
+# def delete_table():
+#     c.execute("DROP TABLE books")
+#     conn.commit()
+#     print("\nTable deleted successfully\n")
+#     c.execute("""CREATE TABLE IF NOT EXISTS books (
+#             serial INTEGER PRIMARY KEY AUTOINCREMENT,
+#             title TEXT,
+#             author TEXT,
+#             genre TEXT,
+#             location TEXT
+#     )""")
+#     conn.commit()
 
 def main():
     while True:
@@ -467,10 +477,13 @@ def main():
             print("\nExiting...")
             print("Thank you for using Library Management Tool\n")
             break
+        # elif choice == "8":
+        #     delete_table()
         elif choice == "":
             print("\nPlease enter a valid choice.")
         else:
             print("\nPlease enter a valid choice.")
+
 
 main()
 
