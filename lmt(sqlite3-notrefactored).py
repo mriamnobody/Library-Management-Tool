@@ -17,9 +17,33 @@ def create_table():
             added_on DATE,
             last_updated_on TEXT
     )""")
-conn.commit()
-
+    conn.commit()
 create_table()
+# c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='books'")
+# if c.fetchone() == None:
+#     print(" ")
+#     print("No table to store book details exists yet in the database.")
+#     print(" ")
+#     while True:
+#         create_table_choice = input("Do you want to create a table named books? (yes/no): ")
+#         if create_table_choice == "yes":
+#             create_table()
+#             break
+#         elif create_table_choice == "no":
+#             print("\nNo table to store book details exists yet in the database.")
+#             print("\nTo use this program, you need to create a table in the database.")
+
+#             while True:
+#                 exit_program = input("\nTo exit the program, press e and then enter:\n")
+#                 if exit_program == "e":
+#                     exit()
+#                 else:
+#                     print("\nPlease enter a valid input.")
+#             break        
+#         else:
+#             print("\nPlease enter a valid input.")
+# else:
+#     pass
 
 trigger_sql = '''
 CREATE TRIGGER IF NOT EXISTS update_serials AFTER DELETE ON books
@@ -31,7 +55,6 @@ c.execute(trigger_sql)
 conn.commit()
 
 def add_book():
-
     c.execute("SELECT serial FROM books ORDER BY serial DESC LIMIT 1")
     counter = c.fetchone()
     if counter == None:
@@ -484,7 +507,7 @@ def total_books():
 def delete_table():
     c.execute("DROP TABLE books")
     conn.commit()
-    print("\nTable deleted successfully\n")
+    print("\nAll books deleted successfully\n")
     conn.commit()
 
 def main():
@@ -496,7 +519,8 @@ def main():
         print("4. Delete a Book")
         print("5. Update a Book")
         print("6. Total Books")
-        print("7. Exit\n")
+        print("7. Delete all Books")
+        print("8. Exit\n")
 
         choice = input("Enter your choice: ")
         counter = 1
@@ -513,33 +537,12 @@ def main():
         elif choice == "6":
             total_books()
         elif choice == "7":
+            delete_table()
+            create_table()
+        elif choice == "8":
             print("\nExiting...")
             print("Thank you for using Library Management Tool\n")
-            break
-        elif choice == "8":
-            print("\nAre you sure you want to delete the table?(yes)/(no):")
-            delete_table_choice = input()
-            while True:
-                if delete_table_choice == "yes":
-                    delete_table()
-                    while True:
-                        create_new_table = input("Do you want to create a new table with same columns as of previous table:(yes)/(no):\n")
-                        if create_new_table == "yes":
-                            create_table()
-                            print("\nNew table with same columns as of previous table was created successfully\n")
-                            break
-                        elif create_new_table == "no":
-                            break
-                        else:
-                            print("\nPlease enter a valid choice.")
-                            break
-                    break
-                elif delete_table_choice == "no":
-                    break
-                else:
-                    print("\nPlease enter a valid choice.")
-                    delete_table_choice = input()
-
+            exit()
         elif choice == "":
             print("\nPlease enter a valid choice.")
         else:
@@ -549,3 +552,24 @@ main()
 
 conn.close()
 
+            # print("\nAre you sure you want to delete the table?(yes)/(no):")
+            # delete_table_choice = input()
+            # while True:
+            #     if delete_table_choice == "yes":
+            #         delete_table()
+            #         while True:
+            #             create_new_table = input("Do you want to create a new table with same columns as of previous table:(yes)/(no):\n")
+            #             if create_new_table == "yes":
+            #                 print("\nNew table with same columns as of previous table was created successfully\n")
+            #                 break
+            #             elif create_new_table == "no":
+            #                 break
+            #             else:
+            #                 print("\nPlease enter a valid choice.")
+            #                 break
+            #         break
+            #     elif delete_table_choice == "no":
+            #         break
+            #     else:
+            #         print("\nPlease enter a valid choice.")
+            #         delete_table_choice = input()
