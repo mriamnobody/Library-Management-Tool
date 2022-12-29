@@ -7,6 +7,14 @@ conn = sqlite3.connect('bookshelf.db')
 c = conn.cursor()
 date_time = datetime.datetime.now()
 
+def print_book_details(books):
+    for book in books:
+        print("\nSerial:",book[0])
+        print("Title:",book[1])
+        print("Author:",book[2])
+        print("Genre:",book[3])
+        print("Location:",book[4])
+
 def create_table():
     c.execute("""CREATE TABLE IF NOT EXISTS books (
             serial INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -86,12 +94,7 @@ def add_book():
     c.execute("SELECT * FROM books WHERE title = ?", (title,))
     books = c.fetchall()
     print("\nBook added successfully")
-    for book in books:
-        print("\nSerial:",book[0])
-        print("Title:",book[1])
-        print("Author:",book[2])
-        print("Genre:",book[3])
-        print("Location:",book[4])
+    print_book_details(books)
 
 def view_books():
     try:
@@ -118,12 +121,7 @@ def delete_book():
         conn.commit()
         books = c.fetchall()
         if len(books) > 1:
-            for book in books:
-                print("\nSerial:",book[0])
-                print("Title:",book[1])
-                print("Author:",book[2])
-                print("Genre:",book[3])
-                print("Location:",book[4])
+            print_book_details(books)
             if books != []:
                 while True:
                     serial = input("\nEnter the serial number of the book which you want to delete:\n")
@@ -155,12 +153,7 @@ def delete_book():
                         print("\nInvalid input.\n")
         else:
             if books != []:
-                for book in books:
-                    print("\nSerial:",book[0])
-                    print("Title:",book[1])
-                    print("Author:",book[2])
-                    print("Genre:",book[3])
-                    print("Location:",book[4])
+                print_book_details(books)
 
                 while True:
                     confirmation = input("\nDo you want to delete this book? (yes/no):\n")
@@ -194,11 +187,7 @@ def search_book():
         books = c.fetchall()
         if books != []:
             print("\nBook found in the library")
-            for book in books:
-                print("\nTitle:",book[0])
-                print("Author:",book[1])
-                print("Genre:",book[2])
-                print("Location:",book[3])
+            print_book_details(books)
         else:
             print("\nBook not found in the library")
 
@@ -223,12 +212,7 @@ def update_book():
         if len(books) > 1:
 
             print("\nWe have found the following books in the library:")
-            for book in books:
-                print("\nSerial:",book[0])
-                print("Title:",book[1])
-                print("Author:",book[2])
-                print("Genre:",book[3])
-                print("Location:",book[4])
+            print_book_details(books)
 
             while True:
                 serial = input("\nEnter the serial number of the book which you want to edit:\n")
@@ -274,11 +258,7 @@ def update_book():
                         c.execute("SELECT * FROM books WHERE title = ? ", (new_title,))
                         conn.commit()
                         books = c.fetchall()
-                        for book in books:
-                            print("\nTitle:",book[0])
-                            print("Author:",book[1])
-                            print("Genre:",book[2])
-                            print("Location:",book[3])
+                        print_book_details(books)
                         break
 
                     elif edit_choice == "2":
@@ -296,11 +276,7 @@ def update_book():
                         c.execute("SELECT * FROM books WHERE author = ?", (new_author,))
                         conn.commit()
                         books = c.fetchall()
-                        for book in books:
-                            print("\nTitle:",book[0])
-                            print("Author:",book[1])
-                            print("Genre:",book[2])
-                            print("Location:",book[3])
+                        print_book_details(books)
                         break
 
                     elif edit_choice == "3":
@@ -318,11 +294,7 @@ def update_book():
                         c.execute("SELECT * FROM books WHERE genre = ? ", (new_genre,))
                         conn.commit()
                         books = c.fetchall()
-                        for book in books:
-                            print("\nTitle:",book[0])
-                            print("Author:",book[1])
-                            print("Genre:",book[2])
-                            print("Location:",book[3])
+                        print_book_details(books)
                         break
 
                     elif edit_choice == "4":
@@ -340,11 +312,7 @@ def update_book():
                         c.execute("SELECT * FROM books WHERE location = ? ", (new_location,))
                         conn.commit()
                         books = c.fetchall()
-                        for book in books:
-                            print("\nTitle:",book[0])
-                            print("Author:",book[1])
-                            print("Genre:",book[2])
-                            print("Location:",book[3])
+                        print_book_details(books)
                         
                         break
                     elif edit_choice == "5":
@@ -357,12 +325,7 @@ def update_book():
         else:
             if books != []:
                 print("\nWe have found the following book in the library:")
-                for book in books:
-                    print("\nSerial:",book[0])
-                    print("Title:",book[1])
-                    print("Author:",book[2])
-                    print("Genre:",book[3])
-                    print("Location:",book[4])
+                print_book_details(books)
 
                 while True:
                     print("\nWhat would you like to edit?")
