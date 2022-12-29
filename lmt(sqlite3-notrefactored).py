@@ -26,6 +26,7 @@ BEGIN
     UPDATE books SET serial = serial - 1 WHERE serial > old.serial;
 END;
 '''
+
 c.execute(trigger_sql)
 conn.commit()
 
@@ -44,7 +45,7 @@ def add_book():
             break
         else:
             print("\nPlease enter a valid title.")
-    c.execute("SELECT * FROM books WHERE title = :title", {'title': title})
+    c.execute("SELECT * FROM books WHERE title = ?", (title,))
     books = c.fetchall()
     if books != [] :
         print("\nBook already exists in the library\n")
@@ -71,18 +72,18 @@ def add_book():
         else:
             print("\nPlease enter a valid location.")
     
-    c.execute("INSERT INTO books VALUES (:serial, :title, :author, :genre, :location, :added_on, :last_updated_on)",
-              {   'serial': counter,
-                  'title': title,
-                  'author': author,
-                  'genre': genre,
-                  'location': location,
-                  'added_on': date_time,
-                  'last_updated_on': None
-              })   
+    c.execute("INSERT INTO books VALUES (?, ?, ?, ?, ?, ?, ?)",
+              (   counter,
+                  title,
+                  author,
+                  genre,
+                  location,
+                  date_time,
+                  None
+              ))   
     conn.commit()
 
-    c.execute("SELECT * FROM books WHERE title = :title", {'title': title})
+    c.execute("SELECT * FROM books WHERE title = ?", (title,))
     books = c.fetchall()
     print("\nBook added successfully")
     for book in books:
@@ -113,7 +114,7 @@ def delete_book():
                 print("\nPlease enter a valid title.")
 
         pattern = "%"+title+"%"
-        c.execute("SELECT * FROM books WHERE title LIKE ?", (pattern,))
+        c.execute("SELECT * FROM books WHERE title LIKE = ?", (pattern,))
         conn.commit()
         books = c.fetchall()
         if len(books) > 1:
@@ -134,7 +135,7 @@ def delete_book():
                 while books == []:
                     print("\nBook with that serial number doesn't exist. Please enter a valid serial number.")
                     serial = input("\nEnter the serial number of the book which you want to delete:\n")
-                    c.execute("SELECT * FROM books WHERE serial = :serial", {'serial': serial})
+                    c.execute("SELECT * FROM books WHERE serial = ?", (serial,))
                     conn.commit()
                     books = c.fetchall()
                 title = books[0][1]
@@ -143,7 +144,7 @@ def delete_book():
                     print(f"\nBook with Serial number {serial} and Title {title} will be deleted:\n")
                     confirmation = input(f"\nDo you want to delete this book? (yes/no):\n")
                     if confirmation == "yes":
-                        c.execute("DELETE FROM books WHERE serial = :serial", {'serial': serial})
+                        c.execute("DELETE FROM books WHERE serial = ?", (serial,))
                         conn.commit()
                         print("\nBook Deleted successfully\n")
                         break
@@ -239,12 +240,12 @@ def update_book():
             while books == []:
                 print("\nBook with that serial number doesn't exist. Please enter a valid serial number.")
                 serial = input("\nEnter the serial number of the book which you want to edit:\n")
-                c.execute("SELECT * FROM books WHERE serial = :serial", {'serial': serial})
+                c.execute("SELECT * FROM books WHERE serial = ?", (serial,))
                 conn.commit()
                 books = c.fetchall()
 
             print(f"\nBook with Serial number {serial} and Title {title} will be edited:\n")
-            c.execute("SELECT * FROM books WHERE serial = :serial", {'serial': serial})
+            c.execute("SELECT * FROM books WHERE serial = ?", (serial,))
             conn.commit()
             books = c.fetchone()
 
@@ -270,7 +271,7 @@ def update_book():
                         c.execute('''UPDATE books SET title = ?, last_updated_on = ? WHERE serial = ?''',(new_title, update_details ,serial))
                         conn.commit()
                         print("\nTitle updated successfully\n")
-                        c.execute("SELECT * FROM books WHERE title = :title", {'title': new_title})
+                        c.execute("SELECT * FROM books WHERE title = ? ", (new_title,))
                         conn.commit()
                         books = c.fetchall()
                         for book in books:
@@ -292,7 +293,7 @@ def update_book():
                         c.execute('''UPDATE books SET author = ?, last_updated_on = ? WHERE serial = ?''',(new_author, update_details ,serial))
                         conn.commit()
                         print("\nAuthor updated successfully\n")
-                        c.execute("SELECT * FROM books WHERE author = :author", {'author': new_author})
+                        c.execute("SELECT * FROM books WHERE author = ?", (new_author,))
                         conn.commit()
                         books = c.fetchall()
                         for book in books:
@@ -314,7 +315,7 @@ def update_book():
                         c.execute('''UPDATE books SET genre = ?, last_updated_on = ? WHERE serial = ?''',(new_genre, update_details ,serial))
                         conn.commit()
                         print("\nGenre updated successfully\n")
-                        c.execute("SELECT * FROM books WHERE genre = :genre", {'genre': new_genre})
+                        c.execute("SELECT * FROM books WHERE genre = ? ", (new_genre,))
                         conn.commit()
                         books = c.fetchall()
                         for book in books:
@@ -336,7 +337,7 @@ def update_book():
                         c.execute('''UPDATE books SET location = ?, last_updated_on = ? WHERE serial = ?''',(new_location, date_time ,serial))
                         conn.commit()
                         print("\nLocation updated successfully\n")
-                        c.execute("SELECT * FROM books WHERE location = :location", {'location': new_location})
+                        c.execute("SELECT * FROM books WHERE location = ? ", (new_location,))
                         conn.commit()
                         books = c.fetchall()
                         for book in books:
@@ -386,7 +387,7 @@ def update_book():
                         conn.commit()
                         print("\nTitle updated successfully\n")
 
-                        c.execute("SELECT * FROM books WHERE title = :title", {'title': new_title})
+                        c.execute("SELECT * FROM books WHERE title = ? ", (new_title,))
                         conn.commit()
                         books = c.fetchall()
                         break
@@ -405,7 +406,7 @@ def update_book():
                         conn.commit()
                         print("\nAuthor updated successfully\n")
                         
-                        c.execute("SELECT * FROM books WHERE author = :author", {'author': new_author})
+                        c.execute("SELECT * FROM books WHERE author = ? ", (new_author,))
                         conn.commit()
                         books = c.fetchall()
                         break
@@ -424,7 +425,7 @@ def update_book():
                         conn.commit()
                         print("\nGenre updated successfully\n")
 
-                        c.execute("SELECT * FROM books WHERE genre = :genre", {'genre': new_genre})
+                        c.execute("SELECT * FROM books WHERE genre = ? ", (new_genre,))
                         conn.commit()
                         books = c.fetchall()
                         break
@@ -443,7 +444,7 @@ def update_book():
                         conn.commit()
                         print("\nLocation updated successfully\n")
 
-                        c.execute("SELECT * FROM books WHERE location = :location", {'location': new_location})
+                        c.execute("SELECT * FROM books WHERE location = ? ", (new_location,))
                         conn.commit()
                         books = c.fetchall()
                         break
@@ -509,11 +510,11 @@ def main():
             print("\nExiting...")
             print("Thank you for using Library Management Tool\n")
             exit()
+            conn.close()
         elif choice == "":
             print("\nPlease enter a valid choice.")
         else:
             print("\nPlease enter a valid choice.")
 
-# conn.close()
 main()
 
