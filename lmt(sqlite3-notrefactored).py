@@ -19,31 +19,6 @@ def create_table():
     )""")
     conn.commit()
 create_table()
-# c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='books'")
-# if c.fetchone() == None:
-#     print(" ")
-#     print("No table to store book details exists yet in the database.")
-#     print(" ")
-#     while True:
-#         create_table_choice = input("Do you want to create a table named books? (yes/no): ")
-#         if create_table_choice == "yes":
-#             create_table()
-#             break
-#         elif create_table_choice == "no":
-#             print("\nNo table to store book details exists yet in the database.")
-#             print("\nTo use this program, you need to create a table in the database.")
-
-#             while True:
-#                 exit_program = input("\nTo exit the program, press e and then enter:\n")
-#                 if exit_program == "e":
-#                     exit()
-#                 else:
-#                     print("\nPlease enter a valid input.")
-#             break        
-#         else:
-#             print("\nPlease enter a valid input.")
-# else:
-#     pass
 
 trigger_sql = '''
 CREATE TRIGGER IF NOT EXISTS update_serials AFTER DELETE ON books
@@ -243,20 +218,17 @@ def update_book():
         c.execute("SELECT * FROM books WHERE title LIKE ?", (pattern,))
         conn.commit()
         books = c.fetchall()
+
         if len(books) > 1:
+
             print("\nWe have found the following books in the library:")
+            for book in books:
+                print("\nSerial:",book[0])
+                print("Title:",book[1])
+                print("Author:",book[2])
+                print("Genre:",book[3])
+                print("Location:",book[4])
 
-        else:
-            print("\nWe have found the following book in the library:")
-
-        for book in books:
-            print("\nSerial:",book[0])
-            print("Title:",book[1])
-            print("Author:",book[2])
-            print("Genre:",book[3])
-            print("Location:",book[4])
-
-        if len(books) > 1:
             while True:
                 serial = input("\nEnter the serial number of the book which you want to edit:\n")
                 if serial != "":
@@ -383,6 +355,14 @@ def update_book():
         
         else:
             if books != []:
+                print("\nWe have found the following book in the library:")
+                for book in books:
+                    print("\nSerial:",book[0])
+                    print("Title:",book[1])
+                    print("Author:",book[2])
+                    print("Genre:",book[3])
+                    print("Location:",book[4])
+
                 while True:
                     print("\nWhat would you like to edit?")
                     print("1. Title")
@@ -401,20 +381,14 @@ def update_book():
                                 print("\nPlease enter a valid title.")
 
                         date_time_str = str(date_time)
-                        update_details = "The author of the book was last updated on" + " " + date_time_str
-                        c.execute('''UPDATE books SET title = ?, last_updated_on = ? WHERE serial = ?''',(new_title, update_details ,serial))
+                        update_details = "The Title of the book was last updated on" + " " + date_time_str
+                        c.execute('''UPDATE books SET title = ?, last_updated_on = ? WHERE title = ?''',(new_title, update_details, title))
                         conn.commit()
                         print("\nTitle updated successfully\n")
 
                         c.execute("SELECT * FROM books WHERE title = :title", {'title': new_title})
                         conn.commit()
                         books = c.fetchall()
-                        for book in books:
-                            print("\nSerial:",book[0])
-                            print("Title:",book[1])
-                            print("Author:",book[2])
-                            print("Genre:",book[3])
-                            print("Location:",book[4])
                         break
 
                     elif edit_choice == "2":
@@ -427,19 +401,13 @@ def update_book():
 
                         date_time_str = str(date_time)
                         update_details = "The author of the book was last updated on" + " " + date_time_str
-                        c.execute('''UPDATE books SET author = ?, last_updated_on = ? WHERE serial = ?''',(new_author, update_details ,serial))
+                        c.execute('''UPDATE books SET author = ?, last_updated_on = ? WHERE title = ?''',(new_author, update_details ,title))
                         conn.commit()
                         print("\nAuthor updated successfully\n")
                         
                         c.execute("SELECT * FROM books WHERE author = :author", {'author': new_author})
                         conn.commit()
                         books = c.fetchall()
-                        for book in books:
-                            print("\nSerial:",book[0])
-                            print("Title:",book[1])
-                            print("Author:",book[2])
-                            print("Genre:",book[3])
-                            print("Location:",book[4])
                         break
 
                     elif edit_choice == "3":
@@ -452,19 +420,13 @@ def update_book():
 
                         date_time_str = str(date_time)
                         update_details = "The genre of the book was last updated on" + " " + date_time_str
-                        c.execute('''UPDATE books SET genre = ?, last_updated_on = ? WHERE serial = ?''',(new_genre, update_details ,serial))
+                        c.execute('''UPDATE books SET genre = ?, last_updated_on = ? WHERE title = ?''',(new_genre, update_details ,title))
                         conn.commit()
                         print("\nGenre updated successfully\n")
 
                         c.execute("SELECT * FROM books WHERE genre = :genre", {'genre': new_genre})
                         conn.commit()
                         books = c.fetchall()
-                        for book in books:
-                            print("\nSerial:",book[0])
-                            print("Title:",book[1])
-                            print("Author:",book[2])
-                            print("Genre:",book[3])
-                            print("Location:",book[4])
                         break
 
                     elif edit_choice == "4":
@@ -477,19 +439,13 @@ def update_book():
 
                         date_time_str = str(date_time)
                         update_details = "The location of the book was last updated on" + " " + date_time_str
-                        c.execute('''UPDATE books SET location = ?, last_updated_on = ? WHERE serial = ?''',(new_location, update_details ,serial))
+                        c.execute('''UPDATE books SET location = ?, last_updated_on = ? WHERE title = ?''',(new_location, update_details ,title))
                         conn.commit()
                         print("\nLocation updated successfully\n")
 
                         c.execute("SELECT * FROM books WHERE location = :location", {'location': new_location})
                         conn.commit()
                         books = c.fetchall()
-                        for book in books:
-                            print("\nSerial:",book[0])
-                            print("Title:",book[1])
-                            print("Author:",book[2])
-                            print("Genre:",book[3])
-                            print("Location:",book[4])
                         break
 
                     elif edit_choice == "5":
@@ -505,10 +461,20 @@ def total_books():
     print(f"There are total {books[0][0]} books in the library")
 
 def delete_table():
-    c.execute("DROP TABLE books")
-    conn.commit()
-    print("\nAll books deleted successfully\n")
-    conn.commit()
+    print("Are you sure you want to delete all books from the library?")
+    print("1. Yes")
+    print("2. No\n")
+    choice = input("Enter your choice: ")
+
+    if choice == "1":
+        c.execute("DROP TABLE books")
+        conn.commit()
+        print("\nAll books deleted successfully\n")
+        conn.commit()
+    elif choice == "2":
+        print("\nNo books deleted from the library\n")
+    else:
+        print("\nPlease enter a valid choice\n")
 
 def main():
     while True:
@@ -548,28 +514,6 @@ def main():
         else:
             print("\nPlease enter a valid choice.")
 
+# conn.close()
 main()
 
-conn.close()
-
-            # print("\nAre you sure you want to delete the table?(yes)/(no):")
-            # delete_table_choice = input()
-            # while True:
-            #     if delete_table_choice == "yes":
-            #         delete_table()
-            #         while True:
-            #             create_new_table = input("Do you want to create a new table with same columns as of previous table:(yes)/(no):\n")
-            #             if create_new_table == "yes":
-            #                 print("\nNew table with same columns as of previous table was created successfully\n")
-            #                 break
-            #             elif create_new_table == "no":
-            #                 break
-            #             else:
-            #                 print("\nPlease enter a valid choice.")
-            #                 break
-            #         break
-            #     elif delete_table_choice == "no":
-            #         break
-            #     else:
-            #         print("\nPlease enter a valid choice.")
-            #         delete_table_choice = input()
