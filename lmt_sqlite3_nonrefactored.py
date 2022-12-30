@@ -45,16 +45,16 @@ conn.commit()
 def add_book():
     c.execute("SELECT serial FROM books ORDER BY serial DESC LIMIT 1")
     counter = c.fetchone()
+    
     if counter == None:
         counter = 0
     else:
         counter = counter[0]
     counter = counter + 1
-
     title = input_field("Title")
-        
     c.execute("SELECT * FROM books WHERE title = ?", (title,))
     books = c.fetchall()
+
     if books != [] :
         print("\nBook already exists in the library\n")
         return
@@ -90,6 +90,7 @@ def view_books():
 def delete_book():
     c.execute("SELECT COUNT(*) FROM books")
     books = c.fetchall()
+
     if books[0][0] == 0:
         print("\nThere are no books in the library.")
     else:   
@@ -98,6 +99,7 @@ def delete_book():
         c.execute("SELECT * FROM books WHERE title LIKE = ?", (pattern,))
         conn.commit()
         books = c.fetchall()
+
         if len(books) > 1:
             print_book_details(books)
             if books != []:
@@ -150,6 +152,7 @@ def delete_book():
 def search_book():
     c.execute("SELECT COUNT(*) FROM books")
     books = c.fetchall()
+
     if books[0][0] == 0:
         print("\nThere are no books in the library.")
     else:    
@@ -260,8 +263,8 @@ def update_book():
                         conn.commit()
                         books = c.fetchall()
                         print_book_details(books)
-                        
                         break
+
                     elif edit_choice == "5":
                         break
                     else:
@@ -398,4 +401,3 @@ def main():
         else:
             print("\nPlease enter a valid choice.")
 main()
-
