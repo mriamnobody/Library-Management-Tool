@@ -8,10 +8,16 @@ As of now, this tool has following features:
 1. Add book details
 
     When a user selects this option the tool will ask four things. Title, Author, Genre and the location where you have kept the book in the library.
-  
-2. Search for a book
 
-3. Delete a book
+2. View all books
+
+3. Search for a book
+
+4. Delete a book
+
+5. Print the total number of books in library
+
+6. Delete all books at once
 
 Prerequesites:
 
