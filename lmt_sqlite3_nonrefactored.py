@@ -45,11 +45,8 @@ conn.commit()
 def add_book():
     c.execute("SELECT serial FROM books ORDER BY serial DESC LIMIT 1")
     counter = c.fetchone()
-    
-    if counter == None:
-        counter = 0
-    else:
-        counter = counter[0]
+
+    counter = 0 if counter is None else counter[0]
     counter = counter + 1
     title = input_field("Title")
     c.execute("SELECT * FROM books WHERE title = ?", (title,))
@@ -71,7 +68,7 @@ def add_book():
                   location,
                   date_time,
                   None
-              ))   
+              ))
     conn.commit()
 
     c.execute("SELECT * FROM books WHERE title = ?", (title,))
@@ -155,9 +152,9 @@ def search_book():
 
     if books[0][0] == 0:
         print("\nThere are no books in the library.")
-    else:    
+    else:
         title = input_field("title")
-        pattern = "%"+title+"%"
+        pattern = f"%{title}%"
         c.execute("SELECT * FROM books WHERE title LIKE ?", (pattern,))
         books = c.fetchall()
         if books != []:
@@ -347,22 +344,27 @@ def total_books():
     print(f"There are total {books[0][0]} books in the library")
 
 def delete_table():
-    print("Are you sure you want to delete all books from the library?")
+    print("\nAre you sure you want to delete all books from the library?")
     print("1. Yes")
     print("2. No\n")
     choice = input("Enter your choice: ")
-
-    if choice == "1":
+    c.execute("SELECT COUNT(*) FROM books")
+    books = c.fetchall()
+ 
+    if choice == "1" and books[0][0] != 0:
         c.execute("DROP TABLE books")
         conn.commit()
         print("\nAll books deleted successfully\n")
         conn.commit()
+    elif choice == "1" and books[0][0] == 0:
+        print("\nThere are no books in the library to delete\n")
     elif choice == "2":
-        print("\nNo books deleted from the library\n")
+        print("\nBooks not deleted\n")
     else:
         print("\nPlease enter a valid choice\n")
 
 def main():
+    counter = 1
     while True:
         print("\n" + " " * 10 + "Library Management Tool" + " " * 10 + "\n")
         print("1. Add a new Book")
@@ -375,7 +377,6 @@ def main():
         print("8. Exit\n")
 
         choice = input("Enter your choice: ")
-        counter = 1
         if choice == "1":
             add_book()
         elif choice == "2":
