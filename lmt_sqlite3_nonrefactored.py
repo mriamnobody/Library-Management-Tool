@@ -1,4 +1,3 @@
-
 import datetime
 import sqlite3
 from tabulate import tabulate
@@ -6,6 +5,11 @@ from tabulate import tabulate
 conn = sqlite3.connect('bookshelf.db')
 c = conn.cursor()
 date_time = datetime.datetime.now()
+
+def input_field(field):
+    while (inp := input(f"\nEnter the {field} of the book: ")) == "":
+        print(f"\nPlease enter a valid {field}.")
+    return inp
 
 def print_book_details(books):
     for book in books:
@@ -47,22 +51,17 @@ def add_book():
         counter = counter[0]
     counter = counter + 1
 
-    while (title := input("\nEnter the Title of the book: ")) == "":
-        print("\nPlease enter a valid title.")
+    title = input_field("Title")
         
     c.execute("SELECT * FROM books WHERE title = ?", (title,))
     books = c.fetchall()
     if books != [] :
         print("\nBook already exists in the library\n")
         return
-    while (author := input("\nEnter the Author of the book: ")) == "":
-        print("\nPlease enter a valid author.")
 
-    while (genre := input("\nEnter the Genre of the book: ")) == "":
-        print("\nPlease enter a valid genre.")
-
-    while (location := input("\nEnter the Location of the book: ")) == "":
-        print("\nPlease enter a valid location.")
+    author = input_field("Author")
+    genre = input_field("Genre")
+    location = input_field("Location")
 
     c.execute("INSERT INTO books VALUES (?, ?, ?, ?, ?, ?, ?)",
               (   counter,
@@ -87,15 +86,14 @@ def view_books():
         print(tabulate(books, headers=['Sr','Title', 'Author', 'Genre', 'Location','Date Added', 'What and When was last Updated'], tablefmt='grid'))
     except:
         print("\nNo table exists yet")
+        
 def delete_book():
     c.execute("SELECT COUNT(*) FROM books")
     books = c.fetchall()
     if books[0][0] == 0:
         print("\nThere are no books in the library.")
     else:   
-        while (title := input("\nEnter the Title of the book: ")) == "":
-            print("\nPlease enter a valid title.")
-
+        title = input_field("title")
         pattern = "%"+title+"%"
         c.execute("SELECT * FROM books WHERE title LIKE = ?", (pattern,))
         conn.commit()
@@ -134,7 +132,6 @@ def delete_book():
         else:
             if books != []:
                 print_book_details(books)
-
                 while True:
                     confirmation = input("\nDo you want to delete this book? (yes/no):\n")
                     if confirmation == "yes":
@@ -156,8 +153,7 @@ def search_book():
     if books[0][0] == 0:
         print("\nThere are no books in the library.")
     else:    
-        while (title := input("\nEnter the Title of the book: ")) == "":
-            print("\nPlease enter a valid title.")
+        title = input_field("title")
         pattern = "%"+title+"%"
         c.execute("SELECT * FROM books WHERE title LIKE ?", (pattern,))
         books = c.fetchall()
@@ -182,7 +178,6 @@ def update_book():
         books = c.fetchall()
 
         if len(books) > 1:
-
             print("\nWe have found the following books in the library:")
             print_book_details(books)
 
@@ -216,8 +211,7 @@ def update_book():
                     edit_choice = input("Enter your choice: ")
 
                     if edit_choice == "1":
-                        while (new_title := input("\nEnter the Title of the book: ")) == "":
-                            print("\nPlease enter a valid title.")
+                        new_title = input_field("new Title")
                         date_time_str = str(date_time)
                         update_details = "The title of the book was last updated on" + " " + date_time_str
                         c.execute('''UPDATE books SET title = ?, last_updated_on = ? WHERE serial = ?''',(new_title, update_details ,serial))
@@ -230,8 +224,7 @@ def update_book():
                         break
 
                     elif edit_choice == "2":
-                        while (new_author := input("\nEnter the Author of the book: ")) == "":
-                            print("\nPlease enter a valid Author.")
+                        new_author = input_field("new Author")
                         date_time_str = str(date_time)
                         update_details = "The author of the book was last updated on" + " " + date_time_str
                         c.execute('''UPDATE books SET author = ?, last_updated_on = ? WHERE serial = ?''',(new_author, update_details ,serial))
@@ -244,8 +237,7 @@ def update_book():
                         break
 
                     elif edit_choice == "3":
-                        while (new_genre := input("\nEnter the Genre of the book: ")) == "":
-                            print("\nPlease enter a valid genre.")
+                        new_genre = input_field("new Genre")
                         date_time_str = str(date_time)
                         update_details = "The genre of the book was last updated on" + " " + date_time_str
                         c.execute('''UPDATE books SET genre = ?, last_updated_on = ? WHERE serial = ?''',(new_genre, update_details ,serial))
@@ -258,8 +250,7 @@ def update_book():
                         break
 
                     elif edit_choice == "4":
-                        while (new_location := input("\nEnter the Location of the book: ")) == "":
-                            print("\nPlease enter a valid Location.")
+                        new_location = input_field("new Location")
                         date_time_str = str(date_time)
                         update_details = "The location of the book was last updated on" + " " + date_time_str
                         c.execute('''UPDATE books SET location = ?, last_updated_on = ? WHERE serial = ?''',(new_location, date_time ,serial))
@@ -293,58 +284,48 @@ def update_book():
                     edit_choice = input("Enter your choice: ")
 
                     if edit_choice == "1":
-                        while (title := input("\nEnter the Title of the book: ")) == "":
-                            print("\nPlease enter a valid title.")
+                        new_title = input_field("new Title")
                         date_time_str = str(date_time)
                         update_details = "The Title of the book was last updated on" + " " + date_time_str
                         c.execute('''UPDATE books SET title = ?, last_updated_on = ? WHERE title = ?''',(new_title, update_details, title))
                         conn.commit()
                         print("\nTitle updated successfully\n")
-
                         c.execute("SELECT * FROM books WHERE title = ? ", (new_title,))
                         conn.commit()
                         books = c.fetchall()
                         break
 
                     elif edit_choice == "2":
-                        while (author := input("\nEnter the Author of the book: ")) == "":
-                            print("\nPlease enter a valid author.")
+                        new_author = input_field("new Author")
                         date_time_str = str(date_time)
                         update_details = "The author of the book was last updated on" + " " + date_time_str
                         c.execute('''UPDATE books SET author = ?, last_updated_on = ? WHERE title = ?''',(new_author, update_details ,title))
                         conn.commit()
                         print("\nAuthor updated successfully\n")
-                        
                         c.execute("SELECT * FROM books WHERE author = ? ", (new_author,))
                         conn.commit()
                         books = c.fetchall()
                         break
 
                     elif edit_choice == "3":
-                        while (genre := input("\nEnter the Genre of the book: ")) == "":
-                            print("\nPlease enter a valid genre.")
-
+                        new_genre = input_field("new Genre")
                         date_time_str = str(date_time)
                         update_details = "The genre of the book was last updated on" + " " + date_time_str
                         c.execute('''UPDATE books SET genre = ?, last_updated_on = ? WHERE title = ?''',(new_genre, update_details ,title))
                         conn.commit()
                         print("\nGenre updated successfully\n")
-
                         c.execute("SELECT * FROM books WHERE genre = ? ", (new_genre,))
                         conn.commit()
                         books = c.fetchall()
                         break
 
                     elif edit_choice == "4":
-                        while (title := input("\nEnter the Location of the book: ")) == "":
-                            print("\nPlease enter a valid location.")
-
+                        new_location = input_field("new Location")
                         date_time_str = str(date_time)
                         update_details = "The location of the book was last updated on" + " " + date_time_str
                         c.execute('''UPDATE books SET location = ?, last_updated_on = ? WHERE title = ?''',(new_location, update_details ,title))
                         conn.commit()
                         print("\nLocation updated successfully\n")
-
                         c.execute("SELECT * FROM books WHERE location = ? ", (new_location,))
                         conn.commit()
                         books = c.fetchall()
@@ -416,6 +397,5 @@ def main():
             print("\nPlease enter a valid choice.")
         else:
             print("\nPlease enter a valid choice.")
-
 main()
 
