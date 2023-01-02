@@ -30,4 +30,6 @@ There are three python files.
   3. lmt_sqlite3_notrefactored.py - This file doesn't require any external database, instead it works with builtin Sqlite3 database. The code of this file not refactored but has imporved logic over the refactored sqlite3.py file. (Refactoring will not affect the logic of the program)
 A lot of work is needed at the time of writing this readme. As of now the tool works through CLI. I will try to build a GUI app for this tool soon.
 
-![](https://komarev.com/ghpvc/?username=mriamnobody&label=Total+Visitors)
+<h3>Visitors :</h3>
+<br>
+<img src="https://profile-counter.glitch.me/mriamnobody/count.svg" alt="Visitors">
